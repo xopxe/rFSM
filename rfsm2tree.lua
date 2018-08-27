@@ -34,16 +34,18 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --
 
-require('gv')
-require('rfsm')
-require('utils')
+local gv = require('gv')
+local rfsm = require('rfsm')
+local utils = require('utils')
 
-local pairs, ipairs, print, table, string, type, assert, gv, io, rfsm
-   = pairs, ipairs, print, table, string, type, assert, gv, io, rfsm
+local pairs, ipairs, print, table, string, type, assert, io
+   = pairs, ipairs, print, table, string, type, assert, io
 
-module("rfsm2tree")
+--module("rfsm2tree")
+local M= {}
 
-param = {}
+local param = {}
+M.param = param
 
 param.trfontsize = 7.0
 param.show_fqn = false
@@ -160,7 +162,7 @@ end
 
 
 -- convert fsm to
-function rfsm2tree(fsm, format, outfile)
+function M.rfsm2tree(fsm, format, outfile)
 
    if not fsm._initialized then
       param.err("rfsm2tree ERROR: fsm " .. (fsm._id or 'root') .. " uninitialized")
@@ -173,3 +175,5 @@ function rfsm2tree(fsm, format, outfile)
    gv.render(gh, format, outfile)
    param.dbg("rfsm2tree: rendering to " .. format .. ", written result to " .. outfile)
 end
+
+return M

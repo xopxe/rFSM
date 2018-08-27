@@ -34,16 +34,18 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --
 
-require("gv")
-require("utils")
-require("rfsm")
+local gv = require("gv")
+local utils = require("utils")
+local rfsm = require("rfsm")
 
-local pairs, ipairs, print, table, type, assert, gv, io, utils, rfsm
-   = pairs, ipairs, print, table, type, assert, gv, io, utils, rfsm
+local pairs, ipairs, print, table, type, assert, io
+   = pairs, ipairs, print, table, type, assert, io
 
-module("rfsm2uml")
+--module("rfsm2uml")
+local M = {}
 
-param = {}
+local param = {}
+M.param = param
 param.fontsize = 12.0
 param.trfontsize = 7.0
 param.ndfontsize = 8.0
@@ -194,7 +196,7 @@ local function new_csta(gh, state, label)
    local ph = get_shandle(gh, state._parent._fqn)
    assert(ph)
 
-   iname = "cluster_" .. state._fqn
+   local iname = "cluster_" .. state._fqn
 
    -- tbd: use gh here?
    if gv.findsubg(ph, iname) then
@@ -226,6 +228,7 @@ end
 -- src and target are only fully qualified strings!
 local function new_tr(gh, src, tgt, events)
    local label
+   local realsh, realth
 
    param.dbg("creating transition from " .. src .. " -> " .. tgt)
 
@@ -293,7 +296,7 @@ end
 -- convert given fsm to a populated graphviz object
 --
 local function fsm2gh(root, caption)
-   gh = new_gra(root._id, caption)
+   local gh = new_gra(root._id, caption)
    rfsm.mapfsm(function (s)
 		  if rfsm.is_root(s) then return end
 		  proc_node(gh, s)
@@ -302,7 +305,7 @@ local function fsm2gh(root, caption)
    return gh
 end
 
-function rfsm2uml(root, format, outfile, caption)
+function M.rfsm2uml(root, format, outfile, caption)
 
    if not root._initialized then
       param.err("rfsm2uml ERROR: fsm " .. root._id .. " uninitialized")
@@ -316,7 +319,7 @@ function rfsm2uml(root, format, outfile, caption)
    param.dbg("rfsm2uml: rendering to " .. format .. ", written result to " .. outfile)
 end
 
-function rfsm2dot(root, outfile, caption)
+function M.rfsm2dot(root, outfile, caption)
    if not root._initialized then
       param.err("rfsm2uml ERROR: fsm " .. root._id .. " uninitialized")
       return false
@@ -325,3 +328,5 @@ function rfsm2dot(root, outfile, caption)
    local gh = fsm2gh(root, caption or " ")
    gv.write(gh, outfile)
 end
+
+return M

@@ -42,49 +42,51 @@
 -- against actually executed trajectory
 --
 
-require("rfsm")
-require("rfsm2uml")
-require("utils")
+local rfsm = require("rfsm")
+local rfsmpp = require("rfsmpp")
+local rfsm2uml = require("rfsm2uml")
+local utils = require("utils")
 local ac = require("ansicolors")
 
 local tab2str = utils.tab2str
 local is_leaf = rfsm.is_leaf
 
-module("rfsm_testing", package.seeall)
+--module("rfsm_testing", package.seeall)
+local M = {}
 
-verbose = false
+M.verbose = false
 
 -- output
 local function stdout(...)
-   if verbose then utils.stdout(unpack(arg)) end
+   if M.verbose then utils.stdout(...) end
 end
 
 local function stderr(...)
    utils.stderr(...)
 end
 
-function activate_leaf(fsm, node, mode)
+function M.activate_leaf(fsm, node, mode)
    assert(is_leaf(node), "can only activate leaf states!")
-   rfsm.map_from_to(fsm, function (fsm, s) set_sta_mode(s, 'active') end, node, fsm)
-   set_sta_mode(node, mode)
+   rfsm.map_from_to(fsm, function (fsm, s) rfsm.set_sta_mode(s, 'active') end, node, fsm)
+   rfsm.set_sta_mode(node, mode)
 end
 
 
-function reset(fsm)
+function M.reset(fsm)
    assert(nil, "tbd: implement reset func!")
 end
 
-function get_act_leaf(fsm)
+function M.get_act_leaf(fsm)
    local c = rfsm.actchild_get(fsm)
    if c == nil then
       return false
    end
    if is_leaf(c) then return c end
-   return get_act_leaf(c)
+   return M.get_act_leaf(c)
 end
 
-function get_act_fqn(fsm)
-   local s = get_act_leaf(fsm)
+function M.get_act_fqn(fsm)
+   local s = M.get_act_leaf(fsm)
    if not s then return "<none>" end
    return s._fqn
 end
@@ -99,8 +101,8 @@ end
 --  id = 'test_id', no whitespace, will be used as name for pics
 --  pics = true|false, generate rfsm2uml snapshots for each step.
 
-function test_fsm(fsm, test, verb, dbg)
-   verbose = verb or false
+function M.test_fsm(fsm, test, verb, dbg)
+   local verbose = verb or false
 
    assert(fsm._initialized, "ERROR: test_fsm requires an initialized fsm!")
    stdout("TESTING:", test.id)
@@ -131,7 +133,7 @@ function test_fsm(fsm, test, verb, dbg)
       rfsm.run(fsm)
 
       if t.expect then
-	 local c = get_act_leaf(fsm)
+	 local c = M.get_act_leaf(fsm)
 	 local fqn = c._fqn
 	 local mode = rfsm.get_sta_mode(c)
 
@@ -154,7 +156,7 @@ function test_fsm(fsm, test, verb, dbg)
    return test
 end
 
-function print_stats(test)
+function M.print_stats(test)
    local succ, fail = 0, 0
    for i = 1,#test.tests do
       if test.tests[i].result then succ = succ + 1
@@ -168,3 +170,5 @@ function print_stats(test)
    utils.stdout(color("Test: '" .. test.id .. "'. " .. #test.tests .. " tests. " ..
 		      succ .. " succeeded, " .. fail .. " failed."))
 end
+
+return M

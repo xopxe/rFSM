@@ -4,27 +4,32 @@
 -- https://github.com/kmarkus/rtp.gitg 
 --
 
-require "rfsm"
-require "rfsm_timeevent"
-require "rtp"
+local rfsm = require "rfsm"
+local rfsm_timeevent = require "rfsm_timeevent"
+local hasrtp, rtp = pcall(require, "rtp")
+if not hasrtp then rtp = nil end
+
+local gettime
 
 if rtt then
    require "rttlib"
    gettime = rtt.getTime
    print("using RTT timing services")
 else
-   if pcall(require, "rtp") then
-      function gettime() return rtp.clock.gettime("CLOCK_MONOTONIC") end
+   if hasrtp then
+      gettime = function() return rtp.clock.gettime("CLOCK_MONOTONIC") end
       print("using rtp timing services")
    else
       print("falling back on low resolution Lua time")
-      function gettime() return os.time(), 0 end
+      gettime = function() return os.time(), 0 end
    end
 end
 
+--[[
 function gettime()
    return rtp.clock.gettime("CLOCK_MONOTONIC")
 end
+--]]
 
 rfsm_timeevent.set_gettime_hook(gettime)
 

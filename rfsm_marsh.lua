@@ -40,7 +40,8 @@ local pcall = pcall
 local tostring = tostring
 local print = print -- debugging only
 
-module("rfsm_marsh")
+--module("rfsm_marsh")
+local M ={}
 
 -- shortcuts
 local mapfsm = rfsm.mapfsm
@@ -52,7 +53,7 @@ local is_node = rfsm.is_node
 local is_trans = rfsm.is_trans
 
 --- Convert an initalized fsm to a table
-function model2tab(fsm)
+function M.model2tab(fsm)
    --- convert a transition to a table
    -- @param t rfsm.transition
    local function trans2tab(t)
@@ -93,9 +94,11 @@ end
 -- @return active leaf state fqn
 -- @return state of that fqn
 -- @return transition path taken to last state
-function actinfo2tab(fsm)
+function M.actinfo2tab(fsm)
    if fsm._act_leaf then
       return fsm._act_leaf._fqn, get_sta_mode(fsm._act_leaf), false
    end
    return false, false, false
 end
+
+return M

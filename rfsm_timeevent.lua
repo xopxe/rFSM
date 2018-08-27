@@ -34,8 +34,6 @@
 -- SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --
 
-require "time"
-require "rfsm"
 
 local utils=require("utils")
 local assert = assert
@@ -43,8 +41,8 @@ local type = type
 local tonumber = tonumber
 local math = math
 local string = string
-local rfsm = rfsm
-local time = time
+local rfsm = require "rfsm"
+local time = require "time"
 local ts2str = time.ts2str
 
 --- This module extends the core rFSM model with time events.
@@ -77,14 +75,16 @@ local ts2str = time.ts2str
 -- and (possibly) generates the time event. A "master" timeevent check
 -- function (check_act_timeevents) calls all check_ handlers of the
 -- current active states during post_step_hook.
-module 'rfsm_timeevent'
+
+--module 'rfsm_timeevent'
+local M = {}
 
 local gettime = false
-debug=false
+local debug=false
 
 --- Setup the gettime function to be used by this module.
 -- @param f function which is expected to return two values sec and nsec.
-function set_gettime_hook(f)
+function M.set_gettime_hook(f)
    assert(type(f) == 'function', "set_gettime_hook: parameter not a function")
    gettime = f
 end
@@ -160,3 +160,5 @@ local function expand_timeevent(fsm)
 end
 
 rfsm.preproc[#rfsm.preproc+1] = expand_timeevent
+
+return M

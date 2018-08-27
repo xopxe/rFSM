@@ -37,16 +37,13 @@
 -- Various pretty printing functions to make life easier
 --
 
-require("ansicolors")
-require("utils")
-require("rfsm")
+local ac = require("ansicolors")
+local utils = require("utils")
+local rfsm = require("rfsm")
 
 local unpack, print, type, pairs, assert = unpack, print, type, pairs, assert
 local table = table
-local utils = utils
 local string = string
-local ac = ansicolors
-local rfsm = rfsm
 
 -- some shortcuts
 local is_meta = rfsm.is_meta
@@ -56,18 +53,18 @@ local is_composite = rfsm.is_composite
 local sta_mode = rfsm.sta_mode
 local fsmobj_tochar = rfsm.fsmobj_tochar
 
-module("rfsmpp")
-
+--module("rfsmpp")
+local M = {}
 
 local pad = 20
 
 -- pretty print fsm
-function fsm2str(fsm, ind)
+function M.fsm2str(fsm, ind)
    local ind = ind or 1
    local indstr = '    '
    local res = {}
 
-   function __2colstr(s)
+   local function __2colstr(s)
       assert(s, "s not a state")
       if s._mode == 'active' then
 	 if is_leaf(s) then return ac.green .. ac.bright .. s._id .. ac.reset
@@ -76,7 +73,7 @@ function fsm2str(fsm, ind)
       else return ac.red .. s._id .. ac.reset end
    end
 
-   function __fsm_tostring(tab, res, ind)
+   local function __fsm_tostring(tab, res, ind)
       for name,state in pairs(tab) do
 	 if not is_meta(name) and is_state(state) then
 	    res[#res+1] = string.rep(indstr, ind) .. __2colstr(state) .. '[' .. fsmobj_tochar(state) .. ']'
@@ -108,15 +105,15 @@ local ctab = {
 }
 
 --- Colorized fsm.dbg hook replacement.
-function dbgcolor(name, ...)
+function M.dbgcolor(name, ...)
    local str = ""
    local args = { ... }
 
    if name then str = ac.cyan .. ac.bright .. name .. ":" .. ac.reset .. '\t' end
 
    -- convert nested tables to strings
-   ptab = utils.map(utils.tab2str, args)
-   col = ctab[ptab[1]]
+   local ptab = utils.map(utils.tab2str, args)
+   local col = ctab[ptab[1]]
 
    if col ~= nil then
       str = str.. col .. utils.rpad(ptab[1], pad) .. ac.reset .. table.concat(ptab, ' ', 2)
@@ -130,14 +127,16 @@ end
 -- @param name string name to prepend to printed message.
 -- @param ftab table of the dbg ids to print.
 -- @param defshow if false fields not mentioned in ftab are not shown. If true they are.
-function gen_dbgcolor(name, ftab, defshow)
+function M.gen_dbgcolor(name, ftab, defshow)
    name = name or "<unnamed SM>"
    ftab = ftab or {}
    if defshow == nil then defshow = true end
 
    return function (tag, ...)
-	     if ftab[tag] == true then dbgcolor(name, tag, ...)
+	     if ftab[tag] == true then M.dbgcolor(name, tag, ...)
 	     elseif ftab[tag] == false then return
-	     else if defshow then dbgcolor(name, tag, ...) end end
+	     else if defshow then M.dbgcolor(name, tag, ...) end end
 	  end
 end
+
+return M
