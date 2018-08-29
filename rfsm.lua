@@ -1169,7 +1169,8 @@ end
 --
 -- tbd: allow more complex events: '+', '*', or functions
 -- important: no events is "null event"
-local function is_enabled(fsm, tr, events)
+local function is_enabled(fsm, tr)
+  local events = fsm.curq
 
   local function is_triggered(tr, evq)
     local idx_ev = tr._idx_events -- indexed events
@@ -1209,10 +1210,10 @@ end
 -- table { node=stateX, nextl=...}. The nextl field is a table of
 -- tables which specify transition segments: { trans=transZ next=next_node_desc }
 
-function M.node_find_enabled(fsm, start, events)
+function M.node_find_enabled(fsm, start)
 
   -- find a path starting from node
-  local function __find_path(nde, events)
+  local function __find_path(nde)
     local cur = { node=nde, nextl={} }
 
     -- path ends if no outgoing path. The static validation should
@@ -1221,12 +1222,12 @@ function M.node_find_enabled(fsm, start, events)
 
     -- check all outgoing transitions from nde
     for k,tr in pairs(nde._otrs) do
-      if is_enabled(fsm, tr, events) then
+      if is_enabled(fsm, tr) then
         -- find continuation
         local tgt = tr.tgt
         local tail
         if is_leaf(tgt) then tail = { node=tgt, nextl=false }
-        elseif is_conn(tgt) then tail = __find_path(tgt, events)
+        elseif is_conn(tgt) then tail = __find_path(tgt)
         else fsm.err("ERROR: node_find_path invalid starting node"
             .. start._fqn .. ", type" .. start:type()) end
           if tail then cur.nextl[#cur.nextl+1] = {trans=tr, next=tail} end
@@ -1239,18 +1240,18 @@ function M.node_find_enabled(fsm, start, events)
     end
 
     assert(is_node(start), "node type expected")
-    return __find_path(start, events)
+    return __find_path(start)
   end
 
 ----------------------------------------
 -- walk down the active tree and call find_path for all active states.
-  local function fsm_find_enabled(fsm, events)
+  local function fsm_find_enabled(fsm)
     local depth = 0
 
     -- states is table of active states at a certain depth
     local function __find_enabled(state)
       fsm.dbg("CHECKING", "depth:", depth, "for transitions from " .. state._fqn)
-      local path = M.node_find_enabled(fsm, state, events)
+      local path = M.node_find_enabled(fsm, state)
       if path then return path end
       local next_state = M.actchild_get(state)
       if not next_state then return end
@@ -1264,10 +1265,10 @@ function M.node_find_enabled(fsm, start, events)
 
 ----------------------------------------
 -- attempt to transition the fsm
-  local function transition(fsm, events)
-    fsm.dbg("TRANSITION", "searching transitions for events: " .. events2str(events))
+  local function transition(fsm)
+    fsm.dbg("TRANSITION", "searching transitions for events: " .. events2str(fsm.curq))
 
-    local path = fsm_find_enabled(fsm, events)
+    local path = fsm_find_enabled(fsm)
     if not path then
       fsm.dbg("TRANSITION", "no enabled paths found")
       return false
@@ -1278,8 +1279,8 @@ function M.node_find_enabled(fsm, start, events)
 
 ----------------------------------------
 -- enter fsm for the first time
-  local function enter_fsm(fsm, events)
-    local path = M.node_find_enabled(fsm, fsm.initial, events)
+  local function enter_fsm(fsm)
+    local path = M.node_find_enabled(fsm, fsm.initial)
 
     if path == false then
       fsm._mode = 'inactive'
@@ -1329,13 +1330,13 @@ function M.node_find_enabled(fsm, start, events)
     -- again, as there exist no transition targets outside of the
     -- FSM. What about root self transition?
     if fsm._mode ~= 'active' then
-      if not enter_fsm(fsm, curq) then
+      if not enter_fsm(fsm) then
         fsm.err("ERROR: failed to enter fsm root " .. fsm._id .. ", no valid path from root.initial")
         return false
       end
       idle = false
     elseif #curq > 0 then	-- received events, attempt to transition
-      do_dec = transition(fsm, curq)
+      do_dec = transition(fsm)
       idle = false
     else
       -- no events, run doo
