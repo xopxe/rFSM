@@ -825,9 +825,9 @@ end
 
 local function get_events(fsm)
   M.check_events(fsm)
-  local ret = fsm._intq
+  fsm.curq = fsm._intq
   fsm._intq = {}
-  return ret
+  return fsm.curq
 end
 
 ----------------------------------------
@@ -1039,7 +1039,7 @@ local function exec_trans_effect(fsm, tr)
   -- run effect
   fsm.dbg("EFFECT", tostring(tr))
   if tr.effect then
-    local succ, err = pcall(tr.effect, fsm, tr, 'effect', events)
+    local succ, err = pcall(tr.effect, fsm, tr, 'effect', fsm.curq)
     if not succ then
       fsm.err('EFFECT', "error executing effect of " ..  tostring(tr) .. ": ", err)
       -- tbd: raise event
