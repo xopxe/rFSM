@@ -1252,10 +1252,10 @@ function M.node_find_enabled(fsm, start, events)
       fsm.dbg("CHECKING", "depth:", depth, "for transitions from " .. state._fqn)
       local path = M.node_find_enabled(fsm, state, events)
       if path then return path end
-      local next = M.actchild_get(state)
-      if not next then return end
+      local next_state = M.actchild_get(state)
+      if not next_state then return end
       depth = depth + 1
-      return __find_enabled(next)
+      return __find_enabled(next_state)
     end
 
     return __find_enabled(fsm)
