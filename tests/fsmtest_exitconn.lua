@@ -4,17 +4,18 @@
 
 package.path = package.path .. ';../?.lua'
 
-require("rfsm")
-require("rfsm2tree")
-require("rfsm_testing")
-require("rfsmpp")
-require("utils")
+local rfsm = require "rfsm"
+local rfsm2tree = require "rfsm2tree"
+local rfsm_testing = require "rfsm_testing"
+local rfsmpp = require "rfsmpp"
+local utils = require "utils"
+
 
 local function puts(...)
    return function () print(unpack(arg)) end
 end
 
-testfsm = rfsm.load("../examples/composite_exitconn.lua")
+local testfsm = rfsm.load("../examples/composite_exitconn.lua")
 testfsm.dbg = false
 
 local test = {
@@ -35,6 +36,6 @@ local test = {
 }
 
 
-fsm = rfsm.init(testfsm, "composite_exitconn")
+local fsm = rfsm.init(testfsm, "composite_exitconn")
 
 rfsm_testing.print_stats(rfsm_testing.test_fsm(fsm, test, false))

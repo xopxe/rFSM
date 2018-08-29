@@ -1,5 +1,7 @@
 -- simple sample state machine which defines an idle doo
 
+local rfsm = require "rfsm"
+
 return  rfsm.csta{
 
    on = rfsm.sista{},

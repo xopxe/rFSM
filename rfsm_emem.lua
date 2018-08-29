@@ -21,7 +21,7 @@ local print, ipairs, pairs = print, ipairs, pairs
 
 --- Reset the event memory of a state
 -- @param state the state of which memory shall be cleared.
-function emem_reset(s)
+local function emem_reset(s)
    local et = s.emem
    if et then
       for e,x in pairs(et) do et[e] = 0 end

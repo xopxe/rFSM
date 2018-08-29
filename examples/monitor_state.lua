@@ -2,12 +2,13 @@
 -- simple example to illustrate the use of gen_monitor_state.
 --
 
-require("rfsm_ext")
+local rfsm_ext = require("rfsm_ext")
+local rfsm = require("rfsm")
 
 --- generate a function which ramdomly returns true n of m times
 -- @param n
 -- @param m
-function gen_sometimes_true(n, m)
+local function gen_sometimes_true(n, m)
    math.randomseed( os.time() )
    return function ()
 	     if n > math.random(0,m) then
@@ -20,12 +21,12 @@ end
 
 -- generate a function which prints 'this'
 -- @param this
-function gen_print_this(this)
+local function gen_print_this(this)
    return function() print(this) end
 end
 
 -- a table of event=monitorfunction pairs
-mon={
+local mon={
    event_1 = gen_sometimes_true(1, 1000000),
    event_5 = gen_sometimes_true(5, 1000000),
    event_10 = gen_sometimes_true(10, 1000000),

@@ -3,8 +3,8 @@
 -- called once.
 
 
-require "rfsm_timeevent"
-require "rfsm_preview"
+local rfsm_timeevent = require "rfsm_timeevent"
+local rfsm_preview = require "rfsm_preview"
 local ac=require "ansicolors"
 local state, trans = rfsm.state, rfsm.trans
 
@@ -19,7 +19,7 @@ function prnt(...) print(ac.green(ac.bright(table.concat({...}, '\t')))) end
 -- @param func function to be called once
 -- @return one shot function
 -- @return reload function
-function gen_call_it_once(func)
+local function gen_call_it_once(func)
    local loaded=true
 
    local function reload() loaded=true end
@@ -34,7 +34,7 @@ end
 
 -- here we generate the one-shot prepare function and the
 -- reloader. These are then used in the FSM below:
-pre_pos_arm, reload_pre_pos_arm = gen_call_it_once(
+local pre_pos_arm, reload_pre_pos_arm = gen_call_it_once(
    function () prnt("pre-positioning arm for grasp") end
 )
 

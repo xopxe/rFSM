@@ -8,6 +8,8 @@
 -- called while no other events are in the queue
 --
 
+local rfsm = require "rfsm"
+
 return rfsm.csta {
    on = rfsm.sista {
       doo=function(fsm)

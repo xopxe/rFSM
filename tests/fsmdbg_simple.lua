@@ -4,10 +4,10 @@
 
 package.path = package.path .. ';../?.lua'
 
-require("rfsm")
-require("fsmdbg")
+local rfsm = require "rfsm"
+local fsmdbg = require "fsmdbg"
 
-simple_templ = rfsm.csta:new{
+local simple_templ = rfsm.csta:new{
 
    idle_hook=function () os.execute("sleep 0.1") end,
 
@@ -21,7 +21,7 @@ simple_templ = rfsm.csta:new{
 
 
 
-fsm = rfsm.init(simple_templ, "simple_test")
+local fsm = rfsm.init(simple_templ, "simple_test")
 -- enable debugging on fsm
 fsmdbg.enable(fsm)
 rfsm.step(fsm)

@@ -6,6 +6,8 @@
 -- syntax.
 --
 
+local rfsm = require "rfsm"
+
 local sista, csta, trans, conn = rfsm.sista, rfsm.csta, rfsm.trans, rfsm.conn
 
 return csta {

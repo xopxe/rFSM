@@ -1,5 +1,7 @@
 -- an *extremly* bug ridden fsm
 
+local rfsm = require "rfsm"
+
 return rfsm.csta{
    a=rfsm.sista{
       entry=function() error("failing in entry!") end,
@@ -14,6 +16,5 @@ return rfsm.csta{
    rfsm.trans{src='initial', tgt='a', 
 	      effect=function() error("effect is even buggier") end },
    
-   rfsm.trans{src='a', tgt='b', guard=function() error("guard is buggy too") end,
-},
+   rfsm.trans{src='a', tgt='b', guard=function() error("guard is buggy too") end,},
 }

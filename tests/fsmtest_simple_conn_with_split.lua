@@ -4,15 +4,15 @@
 
 package.path = package.path .. ';../?.lua'
 
-require("rfsm")
-require("rfsm_testing")
-require("utils")
+local rfsm = require "rfsm"
+local rfsm_testing = require "rfsm_testing"
+local utils = require "utils"
 
 -- load fsm
-testfsm = rfsm.load("../examples/connector_split.lua")
+local testfsm = rfsm.load("../examples/connector_split.lua")
 testfsm.dbg = false
 
-test = {
+local test = {
    id = 'simple_conn_split_test',
    pics = true,
    tests = {
@@ -38,7 +38,7 @@ test = {
    }
 }
 
-jc = rfsm.init(testfsm)
+local jc = rfsm.init(testfsm)
 
 if not jc then
    print(id .. " initalization failed")

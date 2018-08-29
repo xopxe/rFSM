@@ -7,10 +7,12 @@
 -- Most likely doing this is not a good idea for real systems.
 --
 
-max=50
-cnt=0
-function guardA() cnt=cnt+1; return cnt<max; end
-function inv_guardA() return cnt>=max end
+local rfsm = require("rfsm")
+
+local max=50
+local cnt=0
+local function guardA() cnt=cnt+1; return cnt<max; end
+local function inv_guardA() return cnt>=max end
 
 return rfsm.csta {
    rfsm.trans{ src='initial', tgt='conn1' },

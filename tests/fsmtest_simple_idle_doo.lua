@@ -4,11 +4,11 @@
 
 package.path = package.path .. ';../?.lua'
 
-require("rfsm")
-require("rfsm2tree")
-require("rfsm_testing")
-require("utils")
-require("rfsmpp")
+local rfsm = require "rfsm"
+local rfsm2tree = require "rfsm2tree"
+local rfsm_testing = require "rfsm_testing"
+local rfsmpp = require "rfsmpp"
+local utils = require "utils"
 
 local testfsm = rfsm.load("../examples/simple_doo_idle.lua")
 
@@ -41,5 +41,5 @@ local test = {
 }
 
 
-fsm = rfsm.init(testfsm, "simple_test")
+local fsm = rfsm.init(testfsm, "simple_test")
 rfsm_testing.print_stats(rfsm_testing.test_fsm(fsm, test, false))

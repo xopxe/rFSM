@@ -26,10 +26,11 @@
 --    to me right now if that would be useful at all.
 --
 
-require "rfsm_await"
-require "rfsmpp"
+local rfsm_await = require "rfsm_await"
+local rfsmpp = require "rfsmpp"
+local rfsm = require("rfsm")
 
-x= rfsm.state {
+local x= rfsm.state {
    notready=rfsm.state{},
 
    ready=rfsm.state{
@@ -54,7 +55,7 @@ x= rfsm.state {
 x.dbg=rfsmpp.gen_dbgcolor("await", { STATE_ENTER=true, STATE_EXIT=true, AWAIT=true,
 				     EFFECT=true, HIBERNATING=true, RAISED=true}, false)
 
-fsm=rfsm.init(x)
+local fsm=rfsm.init(x)
 
 -- enter the fsm
 rfsm.run(fsm)
