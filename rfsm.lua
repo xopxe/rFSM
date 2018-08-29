@@ -1318,7 +1318,7 @@ function M.node_find_enabled(fsm, start, events)
     if not is_initialized_root(fsm) then fsm.err("ERROR step: invalid fsm") end
 
     local idle = true
-    local n = n or 1
+    n = n or 1
     local do_dec = true		-- if false n will not be decremented
     local curq = get_events(fsm) -- return table with all current events
 
