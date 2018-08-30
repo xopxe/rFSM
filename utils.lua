@@ -97,7 +97,7 @@ function M.lpad(str, len, char, strlen)
    return string.rep(char, len - strlen) .. str
 end
 
-function M.pad(str, len, char, strlen)
+function M.rpad(str, len, char, strlen)
    strlen = strlen or #str
    if char == nil then char = ' ' end
    return str .. string.rep(char, len - strlen)
