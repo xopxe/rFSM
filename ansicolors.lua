@@ -27,6 +27,7 @@ local schar = string.char
 local M = {}
 
 local colormt = {}
+M.colormt = colormt
 
 function M.colormt:__tostring()
     return self.value
