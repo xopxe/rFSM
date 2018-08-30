@@ -2,7 +2,7 @@
 -- Variant that shows how the prepare function can be setup to only be
 -- called once.
 
-
+local rfsm = require "rfsm"
 local rfsm_timeevent = require "rfsm_timeevent"
 local rfsm_preview = require "rfsm_preview"
 local ac=require "ansicolors"

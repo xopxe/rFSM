@@ -7,6 +7,7 @@
 -- be prepared by providing a 'prepare' function, that is called when
 -- and while a transition to grasping becomes/is likely.
 
+local rfsm = require "rfsm"
 local rfsm_timeevent = require "rfsm_timeevent"
 local rfsm_preview = require "rfsm_preview"
 local ac=require "ansicolors"
