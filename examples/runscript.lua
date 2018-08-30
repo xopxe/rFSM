@@ -1,8 +1,8 @@
 local rfsm = require "rfsm"
 
 -- load state machine model and initalize it
-fsm_model=rfsm.load("examples/hello_world.lua")
-fsm = rfsm.init(fsm_model)
+local fsm_model=rfsm.load("examples/hello_world.lua")
+local fsm = rfsm.init(fsm_model)
 
 -- run it, run returns when there is nothing left to do otherwise never
 rfsm.run(fsm)
