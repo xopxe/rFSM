@@ -103,7 +103,7 @@ end
 
 --- Sequential AND state
 local seqand = {}
-M.seqan = seqand
+M.seqand = seqand
 seqand.rfsm=true
 function seqand:type() return 'state' end
 
