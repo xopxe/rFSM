@@ -1,3 +1,4 @@
+local rfsm = require("rfsm")
 
 local state, trans, conn = rfsm.state, rfsm.trans, rfsm.conn
 
