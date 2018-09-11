@@ -400,17 +400,17 @@ function M.memoize (f)
 end
 
 --- call thunk every s+ns seconds.
-function M.gen_do_every(s, ns, thunk, gettime)
-   local next = { sec=0, nsec=0 }
-   local cur = { sec=0, nsec=0 }
-   local inc = { sec=s, nsec=ns }
+function M.gen_do_every(s, thunk, gettime)
+   local nextt = 0
+   local cur = 0
+   local inc = s
 
    return function()
-	     cur.sec, cur.nsec = gettime()
+	     cur = gettime()
 
-	     if time.cmp(cur, next) == 1 then
+	     if cur > nextt then
 		thunk()
-		next.sec, next.nsec = time.add(cur, inc)
+		nextt = cur + inc
 	     end
 	  end
 end

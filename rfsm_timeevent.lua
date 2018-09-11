@@ -42,8 +42,6 @@ local tonumber = tonumber
 local math = math
 local string = string
 local rfsm = require "rfsm"
-local time = require "time"
-local ts2str = time.ts2str
 
 --- This module extends the core rFSM model with time events.
 -- A time-event is specified using the <code>e_after(timespec)</code>
@@ -79,11 +77,10 @@ local ts2str = time.ts2str
 --module 'rfsm_timeevent'
 local M = {}
 
-local gettime = false
-local debug=false
+local gettime = nil
 
 --- Setup the gettime function to be used by this module.
--- @param f function which is expected to return two values sec and nsec.
+-- @param f function which is expected to return a time in sec.
 function M.set_gettime_hook(f)
    assert(type(f) == 'function', "set_gettime_hook: parameter not a function")
    gettime = f
@@ -100,25 +97,25 @@ local function gen_rel_timeevent_mgr(name, timespec, sendf, fsm)
    assert(type(gettime) == 'function',
 	  "rfsm_timeevent error. Failed to install handlers: no gettime function set.")
 
-   local ts = { sec=math.floor(timespec), nsec=((timespec%1)*100000000) }
-   local tend = { sec=false, nsec=false }
-   local tcur = { sec=false, nsec=false }
+   local ts = timespec
+   local tend = nil
+   local tcur = nil
    local fired=false
 
    local reset = function ()
-		    tcur.sec, tcur.nsec = gettime()
-		    tend.sec, tend.nsec = time.add(tcur, ts)
+		    tcur = gettime()
+		    tend = tcur + ts
 		    fired=false
 		    fsm.dbg("TIMEEVENT", "reset timevent " .. name ..
-			    " cur: " .. ts2str(tcur) .. ", end: " .. ts2str(tend))
+			    " cur: " .. tostring(tcur) .. ", end: " .. tostring(tend))
 		 end
 
    local check = function ()
 		    if fired then return end
-		    tcur.sec, tcur.nsec = gettime()
+		    tcur = gettime()
 		    fsm.dbg("TIMEEVENT", "checking timevent " .. name ..
-			    " cur: " .. ts2str(tcur) .. ", end: " .. ts2str(tend))
-		    if time.cmp(tcur, tend) == 1 then
+			    " cur: " .. tostring(tcur) .. ", end: " .. tostring(tend))
+		    if tcur > tend == 1 then
 		       sendf(name)
 		       fired=true
 		    end
