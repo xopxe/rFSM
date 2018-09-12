@@ -882,13 +882,13 @@ local function run_doos(fsm)
     return true
   else
     local state = fsm._act_leaf
-
+    
     -- create new coroutine
     if state.doo and not state._doo_co then
       fsm.dbg("DOO", "created coroutine for " .. state._fqn .. " doo")
       state._doo_co = coroutine.create(state.doo)
     end
-
+    
     -- corountine still active, can be resumed
     if state._doo_co and  coroutine.status(state._doo_co) == 'suspended' then
       local cr_stat, cr_ret = coroutine.resume(state._doo_co, fsm, state, 'doo')
